@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Challenge.Repositories;
@@ -26,14 +27,16 @@ namespace Challenge.Controllers
         public async Task<IActionResult> ProcessWidgets(int amount)
         {
             var widgets = Enumerable.Range(1,amount);
+            var sw = new Stopwatch();
+            sw.Start();
             foreach(var i in widgets)
             {
                 var widget = await _service.DownloadWidget(i);   //we call out to some services to get this thing...
                 widget.Data = widget.Data.ToUpper();             // maybe some kind of processing etc. happens here;
                 await _repo.CommitWidget(widget);                // then we store it somewhere
             }
-
-            return Ok(new {processed = widgets.Count(), elapsedTime=0});
+            sw.Stop();
+            return Ok(new {processed = widgets.Count(), elapsedTime=sw.ElapsedMilliseconds});
         }
     }
 }
