@@ -28,7 +28,7 @@ namespace Challenge.Controllers
             var widgets = Enumerable.Range(1,amount);
             foreach(var i in widgets)
             {
-                var widget = await _service.DownloadWidget(i);   //we call out to some servie to get this thing...
+                var widget = await _service.DownloadWidget(i);   //we call out to some services to get this thing...
                 widget.Data = widget.Data.ToUpper();             // maybe some kind of processing etc. happens here;
                 await _repo.CommitWidget(widget);                // then we store it somewhere
             }

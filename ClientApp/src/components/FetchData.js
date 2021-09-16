@@ -9,7 +9,7 @@ export class FetchData extends Component {
   }
 
   componentDidMount() {
-    this.populateWeatherData();
+    this.processWidgets();
   }
 
   static renderResults(results) {
@@ -45,7 +45,7 @@ export class FetchData extends Component {
     );
   }
 
-  async populateWeatherData() {
+  async processWidgets() {
     const response = await fetch("api/widget?amount=15");
     const data = await response.json();
     this.setState({ results: data, loading: false });
