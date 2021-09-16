@@ -12,7 +12,7 @@ namespace Challenge.Services
         public async Task<Widget> DownloadWidget(int id)
         {
             var widget = new Widget {Id = id, Data = FakeData(25)};
-            await Task.Delay(_random.Next(20,50));
+            await Task.Delay(_random.Next(50,75));
             return  widget;
         }
 
