@@ -12,8 +12,8 @@ namespace Challenge.Services
         public async Task<Widget> DownloadWidget(int id)
         {
             var widget = new Widget {Id = id, Data = FakeData(25)};
-            await Task.Delay(_random.Next(20,50));
-            return  widget;
+            //assume this is very low cost operation
+            return  await Task.FromResult(widget);
         }
 
         private string FakeData(int length)
