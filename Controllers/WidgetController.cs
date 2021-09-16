@@ -29,13 +29,9 @@ namespace Challenge.Controllers
             var widgets = Enumerable.Range(1,amount);
             var sw = new Stopwatch();
             sw.Start();
-            var commits = new List<Task>();
-            foreach(var i in widgets)
-            {
-                var widget = await _service.DownloadWidget(i);   //we call out to some services to get this thing...
-                widget.Data = widget.Data.ToUpper();             // maybe some kind of processing etc. happens here;
-                commits.Add(_repo.CommitWidget(widget));                // then we store it somewhere
-            }
+            var widgetDownloadTasks = widgets.Select(w => _service.DownloadWidget(w));
+            var downloadedWidgets = await Task.WhenAll(widgetDownloadTasks);
+            var commits = downloadedWidgets.Select(c => _repo.CommitWidget(c));
             await Task.WhenAll(commits);
             sw.Stop();
             return Ok(new {processed = widgets.Count(), elapsedTime=sw.ElapsedMilliseconds});
