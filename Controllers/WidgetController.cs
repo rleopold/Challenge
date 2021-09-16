@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Challenge.Domain;
 using Challenge.Repositories;
 using Challenge.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -31,10 +33,18 @@ namespace Challenge.Controllers
             sw.Start();
             var widgetDownloadTasks = widgets.Select(w => _service.DownloadWidget(w));
             var downloadedWidgets = await Task.WhenAll(widgetDownloadTasks);
-            var commits = downloadedWidgets.Select(c => _repo.CommitWidget(c));
+            var gate = new SemaphoreSlim(15,15); // we know 15 works
+            var commits = downloadedWidgets.Select(c => ExecuteCommit(gate, c));
             await Task.WhenAll(commits);
             sw.Stop();
             return Ok(new {processed = widgets.Count(), elapsedTime=sw.ElapsedMilliseconds});
+        }
+
+        private async Task ExecuteCommit(SemaphoreSlim gate,  Widget widget)
+        {
+            await gate.WaitAsync();
+            await _repo.CommitWidget(widget);
+            gate.Release();
         }
     }
 }

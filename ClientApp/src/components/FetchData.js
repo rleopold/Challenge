@@ -46,7 +46,7 @@ export class FetchData extends Component {
   }
 
   async processWidgets() {
-    const response = await fetch("api/widget?amount=15");
+    const response = await fetch("api/widget?amount=30");
     const data = await response.json();
     this.setState({ results: data, loading: false });
   }
